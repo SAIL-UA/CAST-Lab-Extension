@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.3.5
+_src_path: https://github.com/jupyterlab/extension-template
+author_email: egjackson5@crimson.ua.edu
+author_name: Emily Jackson
+has_binder: true
+has_settings: false
+kind: frontend
+labextension_name: myextension
+project_short_description: A JupyterLab extension.
+python_name: myextension
+repository: https://github.com/eJackson1123/CAST_ext
+test: true
+
