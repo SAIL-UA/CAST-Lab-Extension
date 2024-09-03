@@ -26,6 +26,19 @@ dependencies = [
 ]
 dynamic = ["version", "description", "authors", "urls", "keywords"]
 
+[tool.poetry]
+name = "myextension"
+version = "0.1.0"
+description = "A JupyterLab extension that logs executed cells and their outputs."
+
+[tool.poetry.dependencies]
+python = "^3.8"
+jupyterlab = "^3.0"
+
+[tool.poetry.plugins."jupyter_serverproxy_servers"]
+"myextension" = "myextension:setup_handlers"
+
+
 [tool.hatch.version]
 source = "nodejs"
 
