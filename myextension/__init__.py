@@ -20,5 +20,7 @@ def _jupyter_server_extension_points():
     return [{
         'module': 'myextension',
     }]
+
+# Make sure you run "jupyter server extension enable myextension" after building extension
 def load_jupyter_server_extension(nb_server_app):
     setup_handlers(nb_server_app.web_app)

@@ -10,7 +10,7 @@ class LogExecutionHandler(APIHandler):
         try:
             data = self.get_json_body()
 
-            log_file = '/Users/emily/Documents/GitHub/CAST_ext/log_file.json'   # Change this path to your desired log file location
+            log_file = './log_file.json'   # Change this path to your desired log file location
 
             with open(log_file, 'a') as f:
                 f.write(json.dumps(data))
