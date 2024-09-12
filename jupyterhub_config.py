@@ -15,8 +15,8 @@ c.JupyterHub.spawner_class = "simple"
 
 c.JupyterHub.ssl_key = './jupyterhub.cs.ua.edu.key'
 c.JupyterHub.ssl_cert = './jupyterhub_cs_ua_edu_cert.cert'
-c.JupyterHub.hub_bind_url = '127.0.0.1:8080'
-c.JupyterHub.bind_url = '20.98.128.247'
+#c.JupyterHub.hub_bind_url = '127.0.0.1:8080'
+c.JupyterHub.bind_url = 'https://20.98.128.247:443'
 
 # only listen on localhost for testing
 #c.JupyterHub.bind_url = 'http://127.0.0.1:8080'
