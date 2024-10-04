@@ -123,3 +123,13 @@ dmypy.json
 
 # Yarn cache
 .yarn/
+
+# Logs and user files
+logs/
+users/
+
+# Proxy PID file
+*.pid
+
+# Database file
+*.sqlite
