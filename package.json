@@ -60,6 +60,8 @@
         "@jupyterlab/cells": "^4.2.5",
         "@jupyterlab/coreutils": "^6.2.5",
         "@jupyterlab/notebook": "^4.2.5",
+        "@types/jquery": "^3.5.31",
+        "jquery": "^3.7.1",
         "react": "^18.3.1",
         "webpack": "^5.94.0"
     },
