@@ -133,3 +133,12 @@ users/
 
 # Database file
 *.sqlite
+
+*.ipynb
+
+# keys and certificates
+*.cert
+*.crt
+*.csr
+*.key
+jupyterhub_cookie_secret
