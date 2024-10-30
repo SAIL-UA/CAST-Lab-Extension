@@ -9,8 +9,11 @@ import { NotebookPanel, NotebookActions } from '@jupyterlab/notebook';
 import { ICellModel } from '@jupyterlab/cells';
 import { requestAPI } from './handler';
 import { createAlert } from './alert';
+
 import $ from 'jquery';
-  
+
+
+
 
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'myextension:plugin',
@@ -19,7 +22,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
   requires: [INotebookTracker, ICommandPalette],
   activate: (app: JupyterFrontEnd, tracker: INotebookTracker, palette: ICommandPalette) => {
     console.log('JupyterLab extension myextension is activated!');
-
+    
     const command: string = "CAST:select image";
     app.commands.addCommand(command, {
       label: 'Select Storyboard Image',
@@ -80,7 +83,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
     });
     palette.addItem({ command, category: 'CAST' });
-    
     
     // Function to capture executed cell code and output
     const logCellExecution = (notebook: NotebookPanel) => {

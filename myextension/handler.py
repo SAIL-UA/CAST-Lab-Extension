@@ -34,6 +34,11 @@ class ImageHandler(APIHandler):
       src = data["src"][22:] 
       cache_dir = os.getenv("CACHE_PATH")
       id = uuid.uuid4().hex
+      title_regex = re.compile(r'\.title\("[\S\s]*"\)')
+
+      metadata = {}
+      metadata["description"] = "Placeholder Image Description"
+      metadata["source"] = ""
       
       with open(os.path.join(cache_dir,f"{id}.png"), "wb") as f:
         f.write(base64.decodebytes(bytes(src, "utf-8")))
@@ -42,9 +47,14 @@ class ImageHandler(APIHandler):
         f.write("Placeholder Image Description")
 
       if "p_code" in data.keys():
-        p_code = data["p_code"]
-        with open(os.path.join(cache_dir,f"{id}.json"), "w") as f:
-          json.dump(p_code["source"],f)
+        source = data["p_code"]["source"]
+        metadata["source"] = source
+        m = re.search(title_regex,source)
+        if m:
+          metadata["description"] = m.group()[8:-2]
+
+      with open(os.path.join(cache_dir,f"{id}.json"), "w") as f:
+        json.dump(metadata,f)
 
       self.finish(json.dumps({'status': 'success'}))
     except Exception as e:
