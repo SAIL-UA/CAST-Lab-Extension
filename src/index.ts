@@ -9,7 +9,6 @@ import { NotebookPanel, NotebookActions } from '@jupyterlab/notebook';
 import { ICellModel } from '@jupyterlab/cells';
 import { requestAPI } from './handler';
 import { createAlert } from './alert';
-
 import $ from 'jquery';
 
 
