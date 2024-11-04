@@ -142,3 +142,5 @@ users/
 *.csr
 *.key
 jupyterhub_cookie_secret
+
+.copier-answers.yml
