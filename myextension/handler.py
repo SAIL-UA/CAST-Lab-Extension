@@ -45,17 +45,20 @@ class ImageHandler(APIHandler):
       title_regex = re.compile(r'\.title\("[\S\s]*"\)')
 
       # initialize the metadata dictionary
-      metadata = {}
-      metadata["description"] = "Placeholder Image Description"
-      metadata["source"] = ""
+      metadata = {"short_desc": "Placeholder Image Description",
+                  "long_desc": "",
+                  "source": "",
+                  "in_storyboard": False,
+                  "x": 0,
+                  "y": 0,
+                  "has_order": False,
+                  "order_num": 0,
+                  "last_saved": ""
+                  }
       
       # save image to cache
       with open(os.path.join(cache_dir,f"{id}.png"), "wb") as f:
         f.write(base64.decodebytes(bytes(src, "utf-8")))
-
-      # save placeholder description to .txt file in the cache (temp solution)
-      with open(os.path.join(cache_dir,f"{id}.txt"), "w") as f:
-        f.write("Placeholder Image Description")
 
       # if code cell that output current figure is contained in the "data" dict
       if "p_code" in data.keys():
@@ -68,11 +71,11 @@ class ImageHandler(APIHandler):
         # if there is a match
         if m:
           # match is of the form: .title("Figure Title"), so slicing by [8:-2] is consistent
-          metadata["description"] = m.group()[8:-2]
+          metadata["short_desc"] = m.group()[8:-2]
 
       # save json file to the cache
       with open(os.path.join(cache_dir,f"{id}.json"), "w") as f:
-        json.dump(metadata,f)
+        json.dump(metadata,f,indent=4)
 
       # we're done
       self.finish(json.dumps({'status': 'success'}))

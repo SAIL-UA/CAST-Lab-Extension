@@ -10,10 +10,11 @@ c.LocalAuthenticator.create_system_users = False
 
 c.JupyterHub.spawner_class = SudoSpawner
 
-# c.JupyterHub.ssl_key = './jupyterhub.cs.ua.edu.key'
-# c.JupyterHub.ssl_cert = './jupyterhub_cs_ua_edu_cert.cert'
-# c.JupyterHub.bind_url = '0.0.0.0:443'
+# c.JupyterHub.ssl_key = './certs/jupyterhub.cs.ua.edu.key'
+# c.JupyterHub.ssl_cert = './certs/jupyterhub_cs_ua_edu_cert.cer'
+# c.JupyterHub.bind_url = 'https://jupyterhub.cs.ua.edu:443'
 c.JupyterHub.hub_bind_url = 'http://0.0.0.0:8080'
+
 
 # only listen on localhost for testing
 #c.JupyterHub.bind_url = 'http://127.0.0.1:8080'

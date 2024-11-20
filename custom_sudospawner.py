@@ -4,7 +4,7 @@ from jupyterhub.spawner import LocalProcessSpawner
 
 class SudoSpawner(LocalProcessSpawner):
   async def start(self):
-    jupyter_base_dir = '/home/aii03admin/miniconda3/envs/CAST'
+    jupyter_base_dir = '/data/.conda/envs/cast'
     self.env.update({'JUPYTER_CONFIG_DIR': os.path.join(jupyter_base_dir, "etc/jupyter"),
                      'JUPYTER_DATA_DIR': os.path.join(jupyter_base_dir, "share/jupyter"),
                      'JUPYTER_RUNTIME_DIR': '/home/aii03admin/.local/share/jupyter/runtime',

@@ -138,6 +138,7 @@ users/
 
 # keys and certificates
 *.cert
+*.cer
 *.crt
 *.csr
 *.key
