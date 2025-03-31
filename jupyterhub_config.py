@@ -32,7 +32,20 @@ c.JupyterHub.tornado_settings = {
 c.JupyterHub.allow_named_servers = True
 c.JupyterHub.default_url = "/hub/home"
 
-c.Authenticator.allowed_users = {"emily", "user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8"}
+c.Authenticator.allowed_users = {
+  "emily",
+  "user1",
+  "user2",
+  "user3",
+  "user4",
+  "user5",
+  "user6",
+  "user7",
+  "user8",
+  "user9",
+  "user10",
+  "sli90"
+  }
 c.Authenticator.delete_invalid_users = True
 
 # c.ServerApp.terminals_enabled = False

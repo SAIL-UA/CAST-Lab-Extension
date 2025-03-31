@@ -1,4 +1,6 @@
 import os
+import grp
+import pwd
 import datetime
 from jupyterhub.spawner import LocalProcessSpawner
 
@@ -17,10 +19,15 @@ class SudoSpawner(LocalProcessSpawner):
 
     self.env.update({'CACHE_PATH': cache})
 
+    uid = pwd.getpwnam('root').pw_uid
+    gid = grp.getgrnam('jupyter_users').gr_gid
+
     os.makedirs(wd, exist_ok=True)
-    os.chmod(wd, 0o777)
+    os.chown(wd,uid,gid)
+    os.chmod(wd, 0o2770)
     os.makedirs(cache, exist_ok=True)
-    os.chmod(cache, 0o777)
+    os.chown(cache,uid,gid)
+    os.chmod(cache, 0o2770)
 
     self.notebook_dir = wd
     
