@@ -145,3 +145,5 @@ users/
 jupyterhub_cookie_secret
 
 .copier-answers.yml
+
+create_users.sh

@@ -2,7 +2,9 @@ import os
 import grp
 import pwd
 import datetime
+from sqlite3.dbapi2 import Time
 from jupyterhub.spawner import LocalProcessSpawner
+import json
 
 class SudoSpawner(LocalProcessSpawner):
   async def start(self):
@@ -12,7 +14,7 @@ class SudoSpawner(LocalProcessSpawner):
                      'JUPYTER_RUNTIME_DIR': '/home/aii03admin/.local/share/jupyter/runtime',
                      'JUPYTER_SERVERAPP_TERMINALS_ENABLED': 'false'})
     user = self.user.name
-    stamp = datetime.datetime.now()
+    timestamp = datetime.datetime.now()
     base = f"/data/CAST_ext/users/{user}"
     wd = os.path.join(base, "workspace")
     cache = os.path.join(wd, "cache")
@@ -39,10 +41,13 @@ class SudoSpawner(LocalProcessSpawner):
 
     log_path = os.path.join("/data/CAST_ext/logs",user)
     os.makedirs(log_path, mode=0o777, exist_ok=True)
-    log_file = f"/data/CAST_ext/logs/{user}/{stamp}.json"
+    log_file = f"/data/CAST_ext/logs/{user}/{timestamp}.json"
 
     open(log_file, "w")
     os.chmod(log_file, 0o777)
+    # start the log file with an empty array
+    with open(log_file, "w") as f:
+      json.dump([], f, indent=2)
 
     
     self.env.update({'LOG_FILE': log_file})

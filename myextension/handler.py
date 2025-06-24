@@ -14,13 +14,28 @@ class LogExecutionHandler(APIHandler):
     """Contains the logic for the POST method of the '/log' API endpoint"""
     try:
       data = self.get_json_body()
+      if data is None:
+        raise ValueError("No JSON data provided")
       
       # get log file path, which is an environment variable created by the spawner
       log_file = os.getenv("LOG_FILE")
-      # open the log file in append mode and write the data
-      with open(log_file, 'a') as f:
-        f.write(json.dumps(data))
-        f.write("\n")  # Ensure each entry is on a new line
+      if log_file is None:
+        raise ValueError("LOG_FILE environment variable not set")
+      
+      # Read existing log entries, add new entry, and write back with proper indentation
+      try:
+        with open(log_file, 'r') as f:
+          log_entries = json.load(f)
+      except (FileNotFoundError, json.JSONDecodeError):
+        # If file doesn't exist or is empty/invalid, start with empty list
+        log_entries = []
+      
+      # Add the new entry
+      log_entries.append(data)
+      
+      # Write back with proper indentation (entries indented relative to array)
+      with open(log_file, 'w') as f:
+        json.dump(log_entries, f, indent=2)
 
       # we're done
       self.finish(json.dumps({'status': 'success'}))
@@ -35,10 +50,16 @@ class ImageHandler(APIHandler):
     """Contains the logic for the POST method of the '/img' API endpoint"""
     try:
       data = self.get_json_body()
+      if data is None:
+        raise ValueError("No JSON data provided")
+        
       # getting rid of HTML, should use more robust solution eventually
       src = data["src"][22:] 
       # get cache directory path from environment variable
       cache_dir = os.getenv("CACHE_PATH")
+      if cache_dir is None:
+        raise ValueError("CACHE_PATH environment variable not set")
+        
       # generate a new universally unique identifier, and get it's hex representation
       id = uuid.uuid4().hex
       # compiles the regular expression to check for a figure title in the code
