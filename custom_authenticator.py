@@ -4,7 +4,7 @@ from jupyterhub.auth import Authenticator
 
 class CustomAuthenticator(Authenticator):
     def authenticate(self, handler, data):
-        # Implement your custom authentication logic here
+        
         username = data['username']
         password = data['password']
 

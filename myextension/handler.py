@@ -6,7 +6,6 @@ import uuid
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 import tornado
-import tornado.websocket
 
 class LogExecutionHandler(APIHandler):
   @tornado.web.authenticated

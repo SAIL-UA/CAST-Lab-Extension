@@ -39,15 +39,12 @@ class SudoSpawner(LocalProcessSpawner):
     self.mem_limit=3
     
 
-    log_path = os.path.join("/data/CAST_ext/logs",user)
-    os.makedirs(log_path, mode=0o777, exist_ok=True)
-    log_file = f"/data/CAST_ext/logs/{user}/{timestamp}.json"
+    logs_path = f"/data/CAST_ext/logs/{user}/JupyterHub"
+    os.makedirs(logs_path, mode=0o777, exist_ok=True)
+    log_file = os.path.join(logs_path, f"{timestamp}.json")
 
     open(log_file, "w")
     os.chmod(log_file, 0o777)
-    # start the log file with an empty array
-    with open(log_file, "w") as f:
-      json.dump([], f, indent=2)
 
     
     self.env.update({'LOG_FILE': log_file})

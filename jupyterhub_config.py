@@ -21,9 +21,9 @@ c.JupyterHub.hub_bind_url = 'http://0.0.0.0:8080'
 
 # don't cache static files
 c.JupyterHub.tornado_settings = {
-    "no_cache_static": True,
-    "slow_spawn_timeout": 0,
-    "xsrf_cookies": False
+  "no_cache_static": True,
+  "slow_spawn_timeout": 0,
+  "xsrf_cookies": False
 }
 
 # c.Spawner.notebook_dir='/home/saillab/CAST/CAST_ext/users/{username}/workspace'
