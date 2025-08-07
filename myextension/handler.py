@@ -1,11 +1,25 @@
-import os
-import re
-import json
-import base64
-import uuid
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
+from jupyterhub.utils import maybe_future
+from io import BytesIO
+import requests
 import tornado
+import logging
+import base64
+import json
+import sys
+import re
+import os
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+if not logger.hasHandlers():
+  handler = logging.StreamHandler(sys.stdout)
+  formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(name)s: %(message)s')
+  handler.setFormatter(formatter)
+  logger.addHandler(handler)
+
 
 class LogExecutionHandler(APIHandler):
   @tornado.web.authenticated
@@ -45,82 +59,65 @@ class LogExecutionHandler(APIHandler):
 
 class ImageHandler(APIHandler):
   @tornado.web.authenticated
-  def post(self):
-    """Contains the logic for the POST method of the '/img' API endpoint"""
+  async def post(self):
     try:
+      user = self.current_user
+      token = os.environ.get("ACCESS_TOKEN")
+
+      # ✅ Parse image data
       data = self.get_json_body()
-      if data is None:
-        raise ValueError("No JSON data provided")
-        
-      # getting rid of HTML, should use more robust solution eventually
-      src = data["src"][22:] 
-      # get cache directory path from environment variable
-      cache_dir = os.getenv("CACHE_PATH")
-      if cache_dir is None:
-        raise ValueError("CACHE_PATH environment variable not set")
-        
-      # generate a new universally unique identifier, and get it's hex representation
-      id = uuid.uuid4().hex
-      # compiles the regular expression to check for a figure title in the code
-      title_regex = re.compile(r'\.title\("[\S\s]*"\)')
+      if not data or "src" not in data:
+        raise ValueError("Invalid image data")
 
-      # initialize the metadata dictionary
-      metadata = {"short_desc": "Placeholder Image Description",
-                  "long_desc": "",
-                  "source": "",
-                  "in_storyboard": False,
-                  "x": 0,
-                  "y": 0,
-                  "has_order": False,
-                  "order_num": 0,
-                  "last_saved": ""
-                  }
-      
-      # save image to cache
-      with open(os.path.join(cache_dir,f"{id}.png"), "wb") as f:
-        f.write(base64.decodebytes(bytes(src, "utf-8")))
+      base64_image = data["src"].split(",")[1]
+      binary_data = base64.b64decode(base64_image)
+      file_tuple = ('image.png', BytesIO(binary_data), 'image/png')
 
-      # if code cell that output current figure is contained in the "data" dict
-      if "p_code" in data.keys():
-        # code cell's actual source code
-        source = data["p_code"]["source"]
-        # give source code to metadata dict
-        metadata["source"] = source
-        # use the regex compiled earlier in this function to search the source code for a figure title
-        m = re.search(title_regex,source)
-        # if there is a match
-        if m:
-          # match is of the form: .title("Figure Title"), so slicing by [8:-2] is consistent
-          metadata["short_desc"] = m.group()[8:-2]
+      # ✅ Build metadata
+      metadata = {
+        "short_desc": "Placeholder Image Description",
+        "long_desc": "",
+        "source": data.get("p_code", {}).get("source", ""),
+        "in_storyboard": False,
+        "x": 0,
+        "y": 0,
+        "has_order": False,
+        "order_num": 0,
+        "last_saved": ""
+      }
 
-      # save json file to the cache
-      with open(os.path.join(cache_dir,f"{id}.json"), "w") as f:
-        json.dump(metadata,f,indent=4)
+      title_match = re.search(r'\.title\(["\']([\s\S]*?)["\']\)', metadata["source"])
+      if title_match:
+        metadata["short_desc"] = title_match.group(1)
 
-      # we're done
+      # ✅ POST to Django backend
+      response = requests.post(
+        "http://backend:8051/api/upload_figure/",
+        data=metadata,
+        files={"figure": file_tuple},
+        headers={"Authorization": f"Bearer {token}"}
+      )
+
+      if response.status_code != 200:
+        raise Exception(f"Upload failed: {response.status_code} {response.text}")
+
       self.finish(json.dumps({'status': 'success'}))
+
     except Exception as e:
-      self.log.error(f"Error saving image: {e}")
+      self.log.error(f"Error in ImageHandler: {e}")
       self.set_status(500)
       self.finish(json.dumps({'status': 'error', 'message': str(e)}))
 
 
 
+
 def setup_handlers(web_app):
-  """Registers the API handlers at their respective endpoints"""
   host_pattern = '.*$'
-  # get base url
   base_url = web_app.settings['base_url']
-  
-  # join base url + 'log'
   log_route = url_path_join(base_url, 'log')
-
-  # join base url + 'img'
   image_route = url_path_join(base_url, 'img')
-
-  # init handlers list, containing tuples of the form (endpoint, handler)
   handlers = [(log_route, LogExecutionHandler),
               (image_route, ImageHandler)]
   
-  # pass the handlers list to the webapp
+  logger.info(f"Registering handlers at: {handlers}")
   web_app.add_handlers(host_pattern, handlers)

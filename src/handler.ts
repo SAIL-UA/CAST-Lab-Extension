@@ -12,7 +12,7 @@ export async function requestAPI<T>(endpoint: string, init: RequestInit): Promis
   if (xsrfToken) {
     headers.append('X-XSRFToken', xsrfToken);
   }
-
+  
   const response = await fetch(endpoint, {
     ...init,
     headers: headers

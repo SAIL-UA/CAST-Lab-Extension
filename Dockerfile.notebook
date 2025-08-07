@@ -1,0 +1,29 @@
+FROM jupyter/base-notebook:latest
+
+# Install Python build tools and JupyterLab 4
+RUN pip install --no-cache-dir \
+    "jupyterlab==4.2.5" \
+    hatch \
+    hatch-jupyter-builder \
+    hatch-nodejs-version
+
+# Install Node.js (needed for JLPM and building labextensions)
+RUN conda install -c conda-forge nodejs
+
+# Set working directory *before* copying extension code
+WORKDIR /opt/extension
+COPY --chown=1000:100 . .
+
+# Install Node dependencies and build the extension
+RUN jlpm install && \
+    jlpm build:prod
+
+# Install the Python part of the extension in editable mode
+RUN pip install -e . && \
+    jupyter server extension enable myextension
+
+# Link the extension to JupyterLab (editable/development mode)
+RUN jupyter labextension develop . --overwrite
+
+# Switch back to the default notebook home
+WORKDIR /home/jovyan

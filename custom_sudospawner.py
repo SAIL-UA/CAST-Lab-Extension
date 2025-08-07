@@ -13,6 +13,7 @@ class SudoSpawner(LocalProcessSpawner):
                      'JUPYTER_DATA_DIR': os.path.join(jupyter_base_dir, "share/jupyter"),
                      'JUPYTER_RUNTIME_DIR': '/home/aii03admin/.local/share/jupyter/runtime',
                      'JUPYTER_SERVERAPP_TERMINALS_ENABLED': 'false'})
+    
     user = self.user.name
     timestamp = datetime.datetime.now()
     base = f"/data/CAST_ext/users/{user}"
@@ -21,14 +22,14 @@ class SudoSpawner(LocalProcessSpawner):
 
     self.env.update({'CACHE_PATH': cache})
 
-    uid = pwd.getpwnam('root').pw_uid
-    gid = grp.getgrnam('jupyter_users').gr_gid
+    root_uid = pwd.getpwnam('root').pw_uid
+    user_uid = pwd.getpwnam(user).pw_uid
 
     os.makedirs(wd, exist_ok=True)
-    os.chown(wd,uid,gid)
+    os.chown(wd,root_uid,user_uid)
     os.chmod(wd, 0o2770)
     os.makedirs(cache, exist_ok=True)
-    os.chown(cache,uid,gid)
+    os.chown(cache,root_uid,user_uid)
     os.chmod(cache, 0o2770)
 
     self.notebook_dir = wd
