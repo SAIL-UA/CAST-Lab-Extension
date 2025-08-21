@@ -1,0 +1,7 @@
+protobuf==3.19.4
+otter-grader
+nbgitpuller
+numpy
+pandas
+datascience
+matplotlib

@@ -155,7 +155,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           const codeModel = cell.model as ICellModel;  // Cast model to ICodeCellModel
           const outputs = codeModel.toJSON(); // Get the outputs of the cell 
 
-
+          console.log(outputs);
           // Get the current timestamp
           const timestamp = new Date().toISOString();
 
@@ -165,8 +165,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
             timestamp: timestamp
           };
 
-          // Log the existing outputs to the console
-          console.log(`Outputs: ${JSON.stringify(logEntry)}`);
 
           const baseURL = PageConfig.getBaseUrl();
 

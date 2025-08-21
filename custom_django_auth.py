@@ -20,11 +20,13 @@ class DjangoAuthenticator(Authenticator):
             body = res.json()
 
             access_token = body.get('access')
+            refresh_token = body.get('refresh')
             if access_token:
                 return {
                     "name": username,
                     "auth_state": {
                         "access_token": access_token,
+                        "refresh_token": refresh_token,
                         "user": body.get("user", {})
                     }
                 }
@@ -34,8 +36,10 @@ class DjangoAuthenticator(Authenticator):
         return None
     
     async def pre_spawn_start(self, user, spawner):
-        """Optional: Make access_token available to the user server"""
+        """Optional: Make access_token and refresh_token available to the user server"""
         auth_state = await user.get_auth_state()
         if not auth_state:
             return
         spawner.environment['ACCESS_TOKEN'] = auth_state['access_token']
+        spawner.environment['REFRESH_TOKEN'] = auth_state['refresh_token']
+        spawner.environment['STORYSTUDIO_API_URL'] = f"{self.api_url}/api/"

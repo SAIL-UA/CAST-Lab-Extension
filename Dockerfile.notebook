@@ -8,7 +8,8 @@ RUN pip install --no-cache-dir \
     hatch-nodejs-version
 
 # Install Node.js (needed for JLPM and building labextensions)
-RUN conda install -c conda-forge nodejs
+RUN conda install -c conda-forge nodejs && \
+    conda install -c conda-forge git
 
 # Set working directory *before* copying extension code
 WORKDIR /opt/extension
@@ -22,8 +23,15 @@ RUN jlpm install && \
 RUN pip install -e . && \
     jupyter server extension enable myextension
 
+RUN pip install -r notebook.requirements.txt && \
+    jupyter server extension enable nbgitpuller
+
 # Link the extension to JupyterLab (editable/development mode)
 RUN jupyter labextension develop . --overwrite
 
 # Switch back to the default notebook home
-WORKDIR /home/jovyan
+WORKDIR /home/jovyan/work
+
+USER root
+RUN sudo chmod -R 777 /home/jovyan/work
+USER jovyan
